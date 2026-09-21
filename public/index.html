@@ -244,8 +244,9 @@
     flex-direction: column;
   }
   .paycard.is-selected {
+    background: #f8e8ea;
     border-color: var(--anabi);
-    box-shadow: inset 0 0 0 1px var(--anabi);
+    box-shadow: inset 0 0 0 2px var(--anabi);
   }
   .paycard.is-selected .btn { display: none; }
   .alert {
@@ -1104,11 +1105,9 @@
     if (!btn) return;
     btn.addEventListener('click', function (e) {
       e.preventDefault();
+      e.stopPropagation();
       payCards.forEach(function (c) { c.classList.remove('is-selected'); });
       card.classList.add('is-selected');
-    });
-    card.addEventListener('click', function () {
-      if (card.classList.contains('is-selected')) card.classList.remove('is-selected');
     });
   });
 
