@@ -10,6 +10,7 @@ const { URL } = require('url');
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
+const PUBLIC_DIR = path.join(ROOT, 'public');
 
 // كلمة سر لوحة التحكم — يجب ضبطها من Variables في Railway أو البيئة المحلية
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
@@ -98,7 +99,7 @@ const FIELDS = ['card', 'status', 'name', 'qid', 'phone', 'email', 'gender', 'ba
 const serveFile = (res, file) => {
   fs.readFile(file, (err, buf) => {
     if (err) {
-      const fallback = path.join(ROOT, 'index.html');
+      const fallback = path.join(PUBLIC_DIR, 'index.html');
       if (file !== fallback) return serveFile(res, fallback);
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       return res.end('Not found');
@@ -184,8 +185,8 @@ const server = http.createServer(async (req, res) => {
   // الملفات الثابتة
   let rel = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
   if (!path.extname(rel)) rel += '.html';
-  const file = path.join(ROOT, rel);
-  if (!file.startsWith(ROOT)) {
+  const file = path.join(PUBLIC_DIR, rel);
+  if (!file.startsWith(PUBLIC_DIR + path.sep)) {
     res.writeHead(403);
     return res.end('Forbidden');
   }
