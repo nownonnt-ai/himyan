@@ -12,11 +12,8 @@ const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
 
-// كلمة سر لوحة التحكم — يجب ضبطها من Variables في Railway أو البيئة المحلية
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-if (!ADMIN_PASSWORD) {
-  throw new Error('ADMIN_PASSWORD must be set before starting the server');
-}
+// كلمة سر لوحة التحكم — يمكن تغييرها من Variables في Railway
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Ha098765@@';
 
 // مكان حفظ الطلبات (اربط Volume في Railway على نفس المسار للاحتفاظ بالبيانات)
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
