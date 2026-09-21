@@ -414,7 +414,7 @@
     const id = d.id || (d.applicant && d.applicant.id) || d._id;
     try {
       if (id) {
-        await fetch('/api/applications/' + encodeURIComponent(id) + '/decision', {
+        await fetch('/api/payments/' + encodeURIComponent(id) + '/decision', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

