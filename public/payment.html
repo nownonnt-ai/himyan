@@ -615,6 +615,60 @@
     margin:0;
   }
 
+  /* Match the confirmation page chrome. */
+  header {
+    background: #fff;
+    border-bottom: 2px solid #8A1B2F;
+  }
+  header .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    padding: 0 12px;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .header-logo { height: 38px; max-width: 136px; object-fit: contain; }
+  .menu-btn { order: 1; }
+  .header-logo { order: 2; }
+  .lang-toggle { order: 3; border-color: #8A1B2F; color: #8A1B2F; }
+  .site-footer {
+    background: #ECECEE;
+    color: #000;
+    border-top: 2px solid #8A1B2F;
+    margin-top: 26px;
+  }
+  .site-footer::before {
+    content: 'هميان';
+    display: block;
+    padding: 18px 0 4px;
+    text-align: center;
+    color: #000;
+    font-family: 'Cairo', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .site-footer .footer-section {
+    padding: 10px 20px 18px;
+    border-bottom: 1px solid rgba(0,0,0,.12);
+  }
+  .site-footer .footer-links { align-items: center; gap: 7px; }
+  .site-footer .footer-links a,
+  .site-footer .control-label,
+  .site-footer .footer-legal-links a { color: #000; font-weight: 700; }
+  .site-footer .control-group { display: none; }
+  .site-footer .footer-bottom { padding: 14px 20px 20px; }
+  .site-footer .footer-copyright { color: #000; font-weight: 700; }
+  .site-footer .footer-legal-links { margin-bottom: 10px; }
+  .site-footer .footer-legal-links a { font-size: 12.5px; }
+  @media (max-width: 380px) {
+    header .wrap { gap: 6px; padding-inline: 8px; }
+    .header-logo { height: 30px; max-width: 104px; }
+    .lang-toggle { font-size: 10px; padding: 3px 7px; }
+  }
+
   [data-lang="en"]{display:none;}
   body.lang-en [data-lang="ar"]{display:none;}
   body.lang-en [data-lang="en"]{display:inline;}
