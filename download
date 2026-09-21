@@ -1,5 +1,0 @@
-node_modules/
-.env
-data/applications.json
-npm-debug.log*
-.DS_Store
